@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
@@ -22,11 +23,20 @@ func faq(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "<p>Q: Is there a free version?</p><p>A: Yes</p><p>Q: Is there a free version?</p><p>A: Yes</p><p>Q: Is there a free version?</p><p>A: Yes</p><p>Q: Is there a free version?</p><p>A: Yes</p>")
 }
 
+func greeting(w http.ResponseWriter, r *http.Request) {
+	name := chi.URLParam(r, "name")
+	mood := r.URL.Query().Get("mood")
+	fmt.Fprintf(w, "<h1>Greetings</h1> <p>hello %v you are feeling %v", name, mood)
+}
+
 func main() {
 	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	r.Use(middleware.CleanPath)
 	r.Get("/", home)
 	r.Get("/contact", contact)
 	r.Get("/faq", faq)
+	r.Get("/greeting/{name}", greeting)
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "404 page not found", http.StatusNotFound)
 	})
