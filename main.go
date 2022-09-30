@@ -36,8 +36,7 @@ func contact(w http.ResponseWriter, r *http.Request) {
 }
 
 func faq(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprint(w, "<p>Q: Is there a free version?</p><p>A: Yes</p><p>Q: Is there a free version?</p><p>A: Yes</p><p>Q: Is there a free version?</p><p>A: Yes</p><p>Q: Is there a free version?</p><p>A: Yes</p>")
+	executeTemplate(w, "template/faq.gohtml")
 }
 
 func greeting(w http.ResponseWriter, r *http.Request) {
