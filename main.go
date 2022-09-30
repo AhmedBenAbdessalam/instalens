@@ -10,9 +10,9 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func home(w http.ResponseWriter, r *http.Request) {
+func executeTemplate(w http.ResponseWriter, filepath string) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	tpl, err := template.ParseFiles("template/home.gohtml")
+	tpl, err := template.ParseFiles(filepath)
 	if err != nil {
 		log.Printf("Parsing template:%v", err)
 		http.Error(w, "There was an error parsing the template.", http.StatusInternalServerError)
@@ -26,9 +26,13 @@ func home(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func home(w http.ResponseWriter, r *http.Request) {
+	executeTemplate(w, "template/home.gohtml")
+}
+
 func contact(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content_Type", "text/html; charset=utf-8")
-	fmt.Fprint(w, "<h1>contact me here</h1>")
+	executeTemplate(w, "template/contact.gohtml")
+
 }
 
 func faq(w http.ResponseWriter, r *http.Request) {
