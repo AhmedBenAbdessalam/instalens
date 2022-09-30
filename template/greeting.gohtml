@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <ul>
+    <li>{{.Name}}</li>
+    <li>{{.Age}}</li>
+    <li>{{.MovieGenres}}</li>
+    <li>
+      <ul>{{ range .Friends}}
+        <li>{{.}}</li>
+        {{end}}
+      </ul>
+    </li>
+    <li>{{if lt .Meta.Visits 1 }} welcome to the website {{ else }} welcome back to the website {{end}} </li>
+    <ul>
+      {{range $k, $v := .SomeMap}}
+      <li>{{$k}} : {{$v}}</li>
+      {{end}}
+    </ul>
+  </ul>
+</body>
+
+</html>

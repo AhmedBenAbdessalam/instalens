@@ -26,6 +26,34 @@ func executeTemplate(w http.ResponseWriter, filepath string) {
 	}
 }
 
+type User struct {
+	Name        string
+	Age         int
+	MovieGenres []string
+	Friends     [3]string
+	SomeMap     map[string]int
+	Meta        MetaUser
+}
+type MetaUser struct {
+	Visits int
+}
+
+func executeTemplateWithUser(w http.ResponseWriter, filepath string, user User) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	tpl, err := template.ParseFiles(filepath)
+	if err != nil {
+		log.Printf("Parsing template:%v", err)
+		http.Error(w, "There was an error parsing the template.", http.StatusInternalServerError)
+		return
+	}
+	err = tpl.Execute(w, user)
+	if err != nil {
+		log.Printf("executing template:%v", err)
+		http.Error(w, "There was an error parsing the template.", http.StatusInternalServerError)
+		return
+	}
+}
+
 func home(w http.ResponseWriter, r *http.Request) {
 	executeTemplate(w, "template/home.gohtml")
 }
@@ -40,9 +68,21 @@ func faq(w http.ResponseWriter, r *http.Request) {
 }
 
 func greeting(w http.ResponseWriter, r *http.Request) {
-	name := chi.URLParam(r, "name")
-	mood := r.URL.Query().Get("mood")
-	fmt.Fprintf(w, "<h1>Greetings</h1> <p>hello %v you are feeling %v", name, mood)
+	user := User{
+		Name:        "Ahmed",
+		Age:         29,
+		MovieGenres: []string{"Comedy", "Action", "Fantasy", "Historical"},
+		Friends:     [3]string{"Anwar", "Ousema", "Zied"},
+		SomeMap: map[string]int{
+			"test":  1,
+			"test2": 6,
+			"test3": 12,
+		},
+		Meta: MetaUser{
+			Visits: 3,
+		},
+	}
+	executeTemplateWithUser(w, "template/greeting.gohtml", user)
 }
 
 func main() {
@@ -52,7 +92,7 @@ func main() {
 	r.Get("/", home)
 	r.Get("/contact", contact)
 	r.Get("/faq", faq)
-	r.Get("/greeting/{name}", greeting)
+	r.Get("/greeting", greeting)
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "404 page not found", http.StatusNotFound)
 	})
